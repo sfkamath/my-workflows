@@ -33,12 +33,13 @@ jobs:
           fi
           docker run --rm \
             -v ${{ github.workspace }}:/src \
-            -v /home/sfk/odc-data:/data \
+            -v /home/sfk/odc-data:/usr/share/dependency-check/data \
             owasp/dependency-check:latest \
             --project "${{ inputs.project-name }}" \
+            --scan /src \
             --noupdate \
             --format HTML \
-            --output /tmp/dependency-check \
+            --output /tmp/dependency-check-${{ github.run_id }} \
             --failOnCVSS ${{ inputs.fail-on-cvss }} \
             $NVD_FLAG
 
@@ -46,5 +47,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
-          path: /tmp/dependency-check/dependency-check-report.html
+          path: /tmp/dependency-check-${{ github.run_id }}/dependency-check-report.html
           retention-days: 30
