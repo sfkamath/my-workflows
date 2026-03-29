@@ -1,0 +1,41 @@
+name: Dependency Check
+
+on:
+  workflow_call:
+    inputs:
+      project-name:
+        type: string
+        default: ${{ github.repository }}
+      fail-on-cvss:
+        type: number
+        default: 0
+
+jobs:
+  dependency-check:
+    name: OWASP Dependency Check
+    runs-on:
+      - self-hosted
+      - linux
+      - arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run Dependency Check
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/src \
+            -v /home/sfk/odc-data:/data \
+            owasp/dependency-check:latest \
+            --project "${{ inputs.project-name }}" \
+            --noupdate \
+            --format HTML \
+            --output /tmp/dependency-check \
+            --failOnCVSS ${{ inputs.fail-on-cvss }}
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: /tmp/dependency-check/dependency-check-report.html
+          retention-days: 30
