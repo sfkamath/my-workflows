@@ -9,6 +9,10 @@ on:
       fail-on-cvss:
         type: number
         default: 0
+      nvd_api_key:
+        type: string
+        required: false
+        default: ''
 
 jobs:
   dependency-check:
@@ -23,6 +27,10 @@ jobs:
 
       - name: Run Dependency Check
         run: |
+          NVD_FLAG=""
+          if [ -n "${{ inputs.nvd_api_key }}" ]; then
+            NVD_FLAG="--nvdApiKey ${{ inputs.nvd_api_key }}"
+          fi
           docker run --rm \
             -v ${{ github.workspace }}:/src \
             -v /home/sfk/odc-data:/data \
@@ -31,7 +39,8 @@ jobs:
             --noupdate \
             --format HTML \
             --output /tmp/dependency-check \
-            --failOnCVSS ${{ inputs.fail-on-cvss }}
+            --failOnCVSS ${{ inputs.fail-on-cvss }} \
+            $NVD_FLAG
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
