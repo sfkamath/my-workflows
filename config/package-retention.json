@@ -1,0 +1,31 @@
+{
+  "owner": "sfkamath",
+  "owner_type": "user",
+  "package_types": [
+    "container",
+    "maven",
+    "npm"
+  ],
+  "dry_run": true,
+  "defaults": {
+    "keep": 10,
+    "threshold_versions": 50,
+    "threshold_keep": 5,
+    "protected_patterns": [
+      "^latest$",
+      "^v?[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+].*)?$"
+    ]
+  },
+  "overrides": [
+    {
+      "type": "container",
+      "name": "example-package",
+      "keep": 5,
+      "threshold_versions": 25,
+      "threshold_keep": 2,
+      "protected_patterns": [
+        "^production$"
+      ]
+    }
+  ]
+}
