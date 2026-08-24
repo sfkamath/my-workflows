@@ -153,10 +153,10 @@ while IFS= read -r package_type; do
           "$packages_base/$package_type/$encoded_name/versions/$version_id"
         echo "  Deleted version $version_name ($version_id), created $created_at"
       fi
-      ((deleted += 1))
+      deleted=$((deleted + 1))
     done <<<"$deletion_candidates"
 
-    ((inspected += version_count))
+    inspected=$((inspected + version_count))
   done < <(jq -r '.[].name' <<<"$packages_json")
 done < <(jq -r '.package_types[]' "$config_file")
 
